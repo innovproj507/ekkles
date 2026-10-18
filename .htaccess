@@ -1,0 +1,17 @@
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteRule ^$ public/ [L]
+    RewriteRule (.*) public/$1 [L]
+</IfModule>
+
+# Proteger el archivo de entorno
+<Files .env>
+    Order allow,deny
+    Deny from all
+</Files>
+
+# Prevenir acceso a directorios sensibles
+RedirectMatch 404 ^/app/.*$
+RedirectMatch 404 ^/config/.*$
+RedirectMatch 404 ^/core/.*$
+RedirectMatch 404 ^/storage/.*$

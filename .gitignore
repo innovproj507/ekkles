@@ -1,0 +1,42 @@
+# ── Configuración y secretos ─────────────────────────────
+.env
+.env.*
+!.env.example
+
+# ── Dependencias (instalar con: composer install --no-dev) ─
+/vendor/
+
+# ── Datos reales de la iglesia (no versionar) ────────────
+# Excel de origen de la importación
+/ekkles/
+*.xlsx
+*.xls
+*.csv
+# Respaldos y volcados de la base de datos
+/storage/*.sql
+*.sql.gz
+
+# ── Archivos generados en tiempo de ejecución ────────────
+# Logs
+/storage/logs/*
+!/storage/logs/.gitkeep
+error_log
+*.log
+# Recibos de egresos (privados)
+/storage/uploads/
+# Subidas públicas (logos, fotos, QR); se conserva la protección .htaccess
+/public/uploads/*
+!/public/uploads/.htaccess
+# Copia vieja de QR por un error de ruta
+/app/Modules/public/
+
+# ── Editor / sistema operativo ───────────────────────────
+*.code-workspace
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Respaldo del historial git anterior (repo kadoshlopez-creator)
+/.git-respaldo/

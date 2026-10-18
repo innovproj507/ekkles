@@ -1,0 +1,130 @@
+/**
+ * app.css — Estilos Personalizados de Ekkles
+ * -------------------------------------------
+ * Complementa TailwindCSS CDN con animaciones,
+ * componentes custom y utilidades adicionales.
+ */
+
+/* ── Fuentes ── */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+/* ── Variables CSS ── */
+:root {
+    --brand-500: #6366f1;
+    --brand-600: #4f46e5;
+    --brand-700: #4338ca;
+    --bg-dark:   #030712;
+    --bg-panel:  #111827;
+    --border:    #1f2937;
+    --text-muted:#6b7280;
+}
+
+/* ── Reset base ── */
+*, *::before, *::after { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body { font-family: 'Inter', system-ui, sans-serif; }
+
+/* ── Scrollbar personalizada ── */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: #111827; }
+::-webkit-scrollbar-thumb { background: #374151; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #4b5563; }
+
+/* ── Animaciones ── */
+@keyframes slideIn {
+    from { opacity: 0; transform: translateY(-8px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
+@keyframes pulse-brand {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(99, 102, 241, 0.4); }
+    50%       { box-shadow: 0 0 0 8px rgba(99, 102, 241, 0); }
+}
+@keyframes shimmer {
+    0%   { background-position: -200px 0; }
+    100% { background-position: calc(200px + 100%) 0; }
+}
+
+.animate-slideIn { animation: slideIn 0.25s ease-out forwards; }
+.animate-fadeIn  { animation: fadeIn  0.2s ease-out forwards; }
+.animate-pulse-brand { animation: pulse-brand 2s infinite; }
+
+/* ── Skeleton Loader ── */
+.skeleton {
+    background: linear-gradient(90deg, #1f2937 25%, #374151 50%, #1f2937 75%);
+    background-size: 200px 100%;
+    animation: shimmer 1.5s infinite;
+    border-radius: 8px;
+}
+
+/* ── Tabla responsive ── */
+.table-responsive { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+
+/* ── Badge de estado de miembro ── */
+.badge-activo        { background: rgba(16,185,129,.1); color: #10b981; border: 1px solid rgba(16,185,129,.2); }
+.badge-inactivo      { background: rgba(239,68,68,.1);  color: #ef4444; border: 1px solid rgba(239,68,68,.2);  }
+.badge-visitante     { background: rgba(59,130,246,.1); color: #3b82f6; border: 1px solid rgba(59,130,246,.2); }
+.badge-nuevo_creyente{ background: rgba(168,85,247,.1); color: #a855f7; border: 1px solid rgba(168,85,247,.2); }
+.badge-trasladado    { background: rgba(245,158,11,.1); color: #f59e0b; border: 1px solid rgba(245,158,11,.2); }
+
+/* ── Tooltip ── */
+[data-tooltip] { position: relative; }
+[data-tooltip]::after {
+    content: attr(data-tooltip);
+    position: absolute;
+    bottom: calc(100% + 8px);
+    left: 50%;
+    transform: translateX(-50%);
+    background: #1f2937;
+    color: #e5e7eb;
+    font-size: 11px;
+    padding: 4px 8px;
+    border-radius: 6px;
+    white-space: nowrap;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.15s;
+    border: 1px solid #374151;
+    z-index: 100;
+}
+[data-tooltip]:hover::after { opacity: 1; }
+
+/* ── Form controls focus ring ── */
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+    outline: 2px solid var(--brand-500);
+    outline-offset: 0;
+}
+
+/* ── Card hover lift ── */
+.card-hover {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.card-hover:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+}
+
+/* ── Pipeline kanban ── */
+.pipeline-column {
+    min-width: 200px;
+    flex: 1;
+}
+.pipeline-card {
+    transition: transform 0.15s, box-shadow 0.15s;
+}
+.pipeline-card:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 20px rgba(0,0,0,.3);
+}
+
+/* ── Print styles ── */
+@media print {
+    .no-print { display: none !important; }
+    body { background: white; color: black; }
+    .bg-gray-900, .bg-gray-950 { background: white !important; }
+}
