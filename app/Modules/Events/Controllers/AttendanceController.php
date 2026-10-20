@@ -90,12 +90,12 @@ class AttendanceController extends Controller
             return;
         }
 
+        // Layout público: sin menú ni sondeo de sesión (que recargaba la página a quien no ha iniciado sesión)
         $this->view('Events::attendance/qr_form', [
             'title'  => 'Registro de Asistencia - ' . $church['name'],
             'church' => $church,
             'uuid'   => $uuid,
-            'layout' => 'layouts/auth' // Use auth layout as it is a clean unauthenticated layout
-        ]);
+        ], 'public');
     }
 
     /** 

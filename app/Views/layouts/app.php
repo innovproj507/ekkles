@@ -167,7 +167,9 @@
             }
         }
 
-        // AJAX Polling: Mensajes de Administrador y Cierre Forzado
+        // AJAX Polling: Mensajes de Administrador y Cierre Forzado (solo con sesión iniciada;
+        // sin sesión el endpoint redirige al login y esto recargaría la página en bucle)
+        <?php if (!empty($auth_user)): ?>
         setInterval(function() {
             fetch('/api/messages/check', {
                 credentials: 'same-origin',
@@ -203,6 +205,7 @@
             })
             .catch(err => console.error(err));
         }, 15000); // 15 segundos
+        <?php endif; ?>
     </script>
 </body>
 </html>

@@ -88,7 +88,6 @@
                                 class="w-full bg-gray-800 border border-gray-700 text-white rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500">
                             <option value="M" <?= ($old['gender'] ?? 'M') === 'M' ? 'selected' : '' ?>>Masculino</option>
                             <option value="F" <?= ($old['gender'] ?? '') === 'F' ? 'selected' : '' ?>>Femenino</option>
-                            <option value="otro" <?= ($old['gender'] ?? '') === 'otro' ? 'selected' : '' ?>>Otro</option>
                         </select>
                     </div>
                     <!-- Estado civil -->
