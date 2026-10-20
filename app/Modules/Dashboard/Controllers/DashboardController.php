@@ -64,8 +64,12 @@ class DashboardController extends Controller
 
         // ── Finanzas del mes ──
         $financeSummary = $financeModel->getCurrentMonthSummary($churchId);
-        $tithesMonth    = $donationModel->getCurrentMonthTotal($churchId, 'diezmo');
-        $offeringsMonth = $donationModel->getCurrentMonthTotal($churchId, 'ofrenda_general');
+        // Ofrendas del mes en curso (cuenta Iglesia: diezmos + ofrendas) y balance de esa cuenta
+        $offeringTypes  = ['diezmo', 'ofrenda_general', 'ofrenda_especial'];
+        $offeringsMonth = $donationModel->getPeriodTotal($churchId, $offeringTypes, (int)date('Y'), (int)date('n'));
+        $offeringsBalance = $donationModel->getBalance($churchId, $offeringTypes, 'ofrendas', date('Y-m-d'));
+        $monthNames = [1 => 'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
+        $currentMonthName = $monthNames[(int)date('n')];
 
         // ── Flujo de caja anual ──
         $cashFlow = $financeModel->getAnnualCashFlow($churchId, (int)date('Y'));
@@ -88,8 +92,9 @@ class DashboardController extends Controller
             'upcomingEvents'   => $upcomingEvents,
             'weeklyAttendance' => $weeklyAttendance,
             'financeSummary'   => $financeSummary,
-            'tithesMonth'      => $tithesMonth,
             'offeringsMonth'   => $offeringsMonth,
+            'offeringsBalance' => $offeringsBalance,
+            'currentMonthName' => $currentMonthName,
             'cashFlow'         => $cashFlow,
             'pipelineSummary'  => $pipelineSummary,
             'overdueFollowups' => $overdueFollowups,

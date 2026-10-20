@@ -32,41 +32,52 @@ class Finance extends Model
      */
     public function getCurrentMonthSummary(int $churchId): array
     {
-        $result = $this->db->queryOne(
-            "SELECT
-                SUM(CASE WHEN type = 'ingreso' THEN amount ELSE 0 END) as total_ingresos,
-                SUM(CASE WHEN type = 'egreso'  THEN amount ELSE 0 END) as total_egresos,
-                COUNT(*) as total_transacciones
-             FROM finances
-             WHERE church_id = ?
-               AND period_month = MONTH(NOW())
-               AND period_year  = YEAR(NOW())
-               AND status = 'aprobado'",
-            [$churchId]
-        );
+        $row = $this->getAnnualCashFlow($churchId, (int)date('Y'), (int)date('n'))[0] ?? [];
+
+        $ingresos = (float)($row['ingresos'] ?? 0);
+        $egresos  = (float)($row['egresos'] ?? 0);
 
         return [
-            'ingresos'       => (float)($result['total_ingresos'] ?? 0),
-            'egresos'        => (float)($result['total_egresos'] ?? 0),
-            'balance'        => (float)($result['total_ingresos'] ?? 0) - (float)($result['total_egresos'] ?? 0),
-            'transacciones'  => (int)($result['total_transacciones'] ?? 0),
+            'ingresos'       => $ingresos,
+            'egresos'        => $egresos,
+            'balance'        => round($ingresos - $egresos, 2),
+            'transacciones'  => (int)($row['transacciones'] ?? 0),
         ];
     }
 
     /**
-     * Flujo de caja anual (ingresos vs egresos por mes)
+     * Flujo de caja anual (ingresos vs egresos por mes), o de un solo mes.
+     * Ingresos = donaciones/ofrendas aprobadas (tabla donations, las tres cuentas)
+     *          + ingresos registrados manualmente en finances.
+     * Egresos  = egresos aprobados de finances.
      */
-    public function getAnnualCashFlow(int $churchId, int $year): array
+    public function getAnnualCashFlow(int $churchId, int $year, ?int $month = null): array
     {
+        $monthFilter = $month ? ' AND period_month = ?' : '';
+        $params      = $month ? [$churchId, $year, $month, $churchId, $year, $month] : [$churchId, $year, $churchId, $year];
+
         return $this->db->query(
             "SELECT period_month,
-                    SUM(CASE WHEN type = 'ingreso' THEN amount ELSE 0 END) as ingresos,
-                    SUM(CASE WHEN type = 'egreso'  THEN amount ELSE 0 END) as egresos
-             FROM finances
-             WHERE church_id = ? AND period_year = ? AND status = 'aprobado'
+                    SUM(ingresos) as ingresos,
+                    SUM(egresos)  as egresos,
+                    SUM(transacciones) as transacciones
+             FROM (
+                 SELECT period_month, SUM(amount) as ingresos, 0 as egresos, COUNT(*) as transacciones
+                 FROM donations
+                 WHERE church_id = ? AND period_year = ? AND status = 'aprobado'{$monthFilter}
+                 GROUP BY period_month
+                 UNION ALL
+                 SELECT period_month,
+                        SUM(CASE WHEN type = 'ingreso' THEN amount ELSE 0 END),
+                        SUM(CASE WHEN type = 'egreso'  THEN amount ELSE 0 END),
+                        COUNT(*)
+                 FROM finances
+                 WHERE church_id = ? AND period_year = ? AND status = 'aprobado'{$monthFilter}
+                 GROUP BY period_month
+             ) flujo
              GROUP BY period_month
              ORDER BY period_month ASC",
-            [$churchId, $year]
+            $params
         );
     }
 
